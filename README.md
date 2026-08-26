@@ -2,7 +2,7 @@
 
 A modern task management application built with Angular 19, featuring user authentication, role-based permissions with CASL, and a clean architecture design pattern.
 
-> **Note**: This project was developed as a technical challenge for [atomchat.io](https://atomchat.io).
+> **Note**: This project was developed as a full-stack technical challenge.
 
 ## Installation
 
@@ -16,7 +16,7 @@ A modern task management application built with Angular 19, featuring user authe
 
 1. Clone the repository:
 ```bash
-git clone https://bitbucket.org/atomchat-challenge/todo-app.git
+git clone https://github.com/marcotorres/todo-app.git
 cd todo-app
 ```
 
