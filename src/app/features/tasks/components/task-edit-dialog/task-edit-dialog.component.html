@@ -1,0 +1,62 @@
+<h2 mat-dialog-title>
+  <mat-icon aria-hidden="true">edit</mat-icon>
+  Edit Task
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="editForm" id="editTaskForm" class="edit-form">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Task Title</mat-label>
+      <mat-icon matPrefix aria-hidden="true">edit_note</mat-icon>
+      <input
+        matInput
+        formControlName="title"
+        placeholder="What needs to be done?"
+        maxlength="100"
+      />
+      <mat-hint align="end">{{ titleControl?.value?.length || 0 }}/100</mat-hint>
+      @if (titleControl?.hasError('required') && titleControl?.touched) {
+        <mat-error>Title is required</mat-error>
+      }
+      @if (titleControl?.hasError('minlength') && titleControl?.touched) {
+        <mat-error>Title must be at least 3 characters</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Description (optional)</mat-label>
+      <mat-icon matPrefix aria-hidden="true">notes</mat-icon>
+      <textarea
+        matInput
+        formControlName="description"
+        placeholder="Add more details about this task..."
+        rows="3"
+        maxlength="500"
+      ></textarea>
+      <mat-hint align="end">{{ descriptionControl?.value?.length || 0 }}/500</mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading()">
+    Cancel
+  </button>
+  <button
+    mat-flat-button
+    (click)="onSave()"
+    [disabled]="loading() || editForm.invalid"
+  >
+    @if (loading()) {
+      <ng-container>
+        <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
+        <span>Saving...</span>
+      </ng-container>
+    } @else {
+      <ng-container>
+        <mat-icon>save</mat-icon>
+        <span>Save Changes</span>
+      </ng-container>
+    }
+  </button>
+</mat-dialog-actions>

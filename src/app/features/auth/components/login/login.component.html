@@ -1,0 +1,76 @@
+<div class="login-page">
+  <!-- Background decoration -->
+  <div class="login-bg">
+    <div class="login-bg-shape login-bg-shape-1"></div>
+    <div class="login-bg-shape login-bg-shape-2"></div>
+    <div class="login-bg-shape login-bg-shape-3"></div>
+  </div>
+
+  <!-- Login card -->
+  <div class="login-container">
+    <mat-card class="login-card">
+      <!-- Logo and branding -->
+      <div class="login-header">
+        <div class="login-logo">
+          <mat-icon aria-hidden="true">task_alt</mat-icon>
+        </div>
+        <h1 class="login-title">Todo App</h1>
+        <p class="login-subtitle">Organize your tasks, boost your productivity</p>
+      </div>
+
+      <!-- Form -->
+      <mat-card-content class="login-content">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Email address</mat-label>
+            <mat-icon matTextPrefix aria-hidden="true">mail_outline</mat-icon>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              [attr.aria-invalid]="emailControl?.invalid && emailControl?.touched"
+            />
+            @if (emailControl?.hasError('required') && emailControl?.touched) {
+              <mat-error>Email is required</mat-error>
+            }
+            @if (emailControl?.hasError('email') && emailControl?.touched) {
+              <mat-error>Please enter a valid email</mat-error>
+            }
+          </mat-form-field>
+
+          <button
+            mat-flat-button
+            type="submit"
+            class="login-button"
+            [disabled]="loading()"
+            aria-label="Sign in button"
+          >
+            @if (loading()) {
+              <mat-spinner diameter="22" strokeWidth="3"></mat-spinner>
+            } @else {
+              <ng-container>
+                <span>Continue</span>
+                <mat-icon class="button-icon">chevron_right</mat-icon>
+              </ng-container>
+            }
+          </button>
+        </form>
+
+        <div class="login-divider">
+          <span>New here?</span>
+        </div>
+
+        <p class="login-info">
+          Enter your email to sign in. If you don't have an account, we'll help you create one.
+        </p>
+      </mat-card-content>
+
+      <!-- Footer -->
+      <div class="login-footer">
+        <mat-icon aria-hidden="true">lock_outline</mat-icon>
+        <span>Secure authentication</span>
+      </div>
+    </mat-card>
+  </div>
+</div>

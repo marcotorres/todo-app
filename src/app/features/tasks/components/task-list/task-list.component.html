@@ -1,0 +1,250 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed()">
+    <div class="sidebar-header">
+      <div class="logo">
+        <mat-icon>task_alt</mat-icon>
+        @if (!sidebarCollapsed()) {
+          <span class="logo-text">TaskFlow</span>
+        }
+      </div>
+      <button mat-icon-button class="collapse-btn" (click)="toggleSidebar()">
+        <mat-icon>{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active">
+        <mat-icon>checklist</mat-icon>
+        @if (!sidebarCollapsed()) {
+          <span>My Tasks</span>
+        }
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      @if (!sidebarCollapsed()) {
+        <div class="powered-by">
+          Built with <mat-icon class="heart-icon">favorite</mat-icon> & debugged over <mat-icon class="coffee-icon">coffee</mat-icon>
+        </div>
+      }
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-left">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Manage your tasks and stay productive</p>
+      </div>
+
+      <div class="header-right">
+        <!-- Search -->
+        <div class="search-box">
+          <mat-icon>search</mat-icon>
+          <input 
+            type="text" 
+            placeholder="Search tasks..." 
+            [value]="searchQuery()"
+            (input)="onSearch($event)"
+          />
+          @if (searchQuery()) {
+            <button mat-icon-button class="clear-search" (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </div>
+
+        <!-- Notifications -->
+        <button mat-icon-button class="notification-btn" [matMenuTriggerFor]="notificationMenu" matTooltip="Notifications">
+          <mat-icon>{{ unreadCount() > 0 ? 'notifications' : 'notifications_none' }}</mat-icon>
+          @if (unreadCount() > 0) {
+            <span class="notification-badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
+          }
+        </button>
+
+        <mat-menu #notificationMenu="matMenu" class="notification-menu">
+          <div class="notification-header" (click)="$event.stopPropagation()">
+            <span class="notification-title">Notifications</span>
+            @if (unreadCount() > 0) {
+              <button mat-button class="mark-read-btn" (click)="markAllNotificationsAsRead()">
+                Mark all as read
+              </button>
+            }
+          </div>
+          <mat-divider></mat-divider>
+          @if (notifications().length === 0) {
+            <div class="notification-empty" (click)="$event.stopPropagation()">
+              <mat-icon>notifications_off</mat-icon>
+              <p>No notifications yet</p>
+            </div>
+          } @else {
+            @for (notification of notifications(); track notification.id) {
+              <button mat-menu-item class="notification-item" [class.unread]="!notification.read" (click)="markNotificationAsRead(notification.id)">
+                <mat-icon [class]="'notification-icon ' + notification.type">{{ getNotificationIcon(notification.type) }}</mat-icon>
+                <div class="notification-content">
+                  <span class="notification-item-title">{{ notification.title }}</span>
+                  <span class="notification-message">{{ notification.message }}</span>
+                  <span class="notification-time">{{ notification.timestamp | relativeTime }}</span>
+                </div>
+              </button>
+            }
+          }
+        </mat-menu>
+
+        <!-- User Profile -->
+        <div class="user-profile" [matMenuTriggerFor]="userMenu">
+          <div class="user-avatar">
+            {{ getUserInitials() }}
+          </div>
+          @if (currentUser()) {
+            <div class="user-info">
+              <span class="user-name">{{ currentUser()?.name }} {{ currentUser()?.lastname }}</span>
+              <span class="user-email">{{ currentUser()?.email }}</span>
+            </div>
+          }
+          <mat-icon>expand_more</mat-icon>
+        </div>
+
+        <mat-menu #userMenu="matMenu" class="user-menu">
+          @if (canUpdateUser()) {
+            <button mat-menu-item (click)="openProfileDialog()">
+              <mat-icon>person</mat-icon>
+              <span>My Profile</span>
+            </button>
+          }
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <mat-icon>assignment</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ tasks().length }}</span>
+          <span class="stat-label">Total Tasks</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <mat-icon>pending_actions</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ getPendingCount() }}</span>
+          <span class="stat-label">Pending</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon completed">
+          <mat-icon>task_alt</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ getCompletedCount() }}</span>
+          <span class="stat-label">Completed</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon progress">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ getCompletionRate() }}%</span>
+          <span class="stat-label">Completion Rate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tasks Section -->
+    <div class="tasks-section">
+      <div class="section-header">
+        <h2 class="section-title">Recent Tasks</h2>
+@if (canCreateTask()) {
+          <button mat-flat-button class="add-task-btn" (click)="toggleForm()">
+            <mat-icon>{{ showForm() ? 'close' : 'add' }}</mat-icon>
+            {{ showForm() ? 'Cancel' : 'Add Task' }}
+          </button>
+        }
+      </div>
+
+      <!-- Task Form -->
+      @if (showForm()) {
+        <div class="task-form-wrapper">
+          <app-task-form (taskCreated)="onTaskCreated()"></app-task-form>
+        </div>
+      }
+
+      <!-- Loading State -->
+      @if (loading()) {
+        <app-loading-spinner></app-loading-spinner>
+      }
+
+      <!-- Task List -->
+      @if (!loading()) {
+        @if (tasks().length === 0) {
+          <div class="empty-state">
+            <mat-icon>inbox</mat-icon>
+            <h3>No tasks yet</h3>
+            <p>Click "Add Task" to create your first task</p>
+          </div>
+        } @else {
+          <div class="tasks-list" role="list">
+            @for (task of tasks(); track trackByTaskId($index, task)) {
+              <div class="task-item" [class.completed]="task.completed" role="listitem">
+                <mat-checkbox
+                  [checked]="task.completed"
+                  (change)="toggleTaskStatus(task)"
+                  [disabled]="!canCompleteTask()"
+                  color="primary"
+                ></mat-checkbox>
+
+                <div class="task-content">
+                  <h4 class="task-title" [class.done]="task.completed">{{ task.title }}</h4>
+                  @if (task.description) {
+                    <p class="task-description">{{ task.description }}</p>
+                  }
+                  <div class="task-meta">
+                    <span class="task-date">
+                      <mat-icon>schedule</mat-icon>
+                      {{ task.createdAt | relativeTime }}
+                    </span>
+                    <span class="task-status" [class.status-completed]="task.completed" [class.status-pending]="!task.completed">
+                      {{ task.completed ? 'Completed' : 'Pending' }}
+                    </span>
+                  </div>
+                </div>
+
+                <button mat-icon-button [matMenuTriggerFor]="taskMenu" class="task-actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #taskMenu="matMenu">
+                  @if (canUpdateTask()) {
+                    <button mat-menu-item (click)="editTask(task)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Edit</span>
+                    </button>
+                  }
+                  @if (canDeleteTask()) {
+                    <button mat-menu-item (click)="deleteTask(task)" class="delete-item">
+                      <mat-icon>delete</mat-icon>
+                      <span>Delete</span>
+                    </button>
+                  }
+                </mat-menu>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

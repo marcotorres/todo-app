@@ -1,0 +1,63 @@
+<mat-card appearance="outlined" class="task-form-card">
+  <mat-card-header>
+    <mat-card-title class="flex items-center gap-2">
+      <mat-icon aria-hidden="true">add_task</mat-icon>
+      Create New Task
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="task-form">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Task Title</mat-label>
+        <mat-icon matPrefix aria-hidden="true">edit_note</mat-icon>
+        <input
+          matInput
+          formControlName="title"
+          placeholder="What needs to be done?"
+          maxlength="100"
+        />
+        <mat-hint align="end">{{ titleControl?.value?.length || 0 }}/100</mat-hint>
+        @if (titleControl?.hasError('required') && titleControl?.touched) {
+          <mat-error>Title is required</mat-error>
+        }
+        @if (titleControl?.hasError('minlength') && titleControl?.touched) {
+          <mat-error>Title must be at least 3 characters</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Description (optional)</mat-label>
+        <mat-icon matPrefix aria-hidden="true">notes</mat-icon>
+        <textarea
+          matInput
+          formControlName="description"
+          placeholder="Add more details about this task..."
+          rows="3"
+          maxlength="500"
+        ></textarea>
+        <mat-hint align="end">{{ descriptionControl?.value?.length || 0 }}/500</mat-hint>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button
+          mat-flat-button
+          type="submit"
+          [disabled]="loading() || taskForm.invalid"
+        >
+          @if (loading()) {
+            <ng-container>
+              <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
+              <span>Creating...</span>
+            </ng-container>
+          } @else {
+            <ng-container>
+              <mat-icon>add_task</mat-icon>
+              <span>Create Task</span>
+            </ng-container>
+          }
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

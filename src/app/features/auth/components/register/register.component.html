@@ -1,0 +1,240 @@
+<div class="register-page">
+  <!-- Background decoration -->
+  <div class="register-bg">
+    <div class="register-bg-shape register-bg-shape-1"></div>
+    <div class="register-bg-shape register-bg-shape-2"></div>
+    <div class="register-bg-shape register-bg-shape-3"></div>
+  </div>
+
+  <!-- Register card -->
+  <div class="register-container">
+    <mat-card class="register-card">
+      <!-- Header -->
+      <div class="register-header">
+        <button mat-icon-button class="back-button" (click)="goBack()" aria-label="Go back to login">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="register-logo">
+          <mat-icon aria-hidden="true">person_add</mat-icon>
+        </div>
+        <h1 class="register-title">Create Account</h1>
+        <p class="register-subtitle">Complete your profile to get started</p>
+      </div>
+
+      <!-- Form -->
+      <mat-card-content class="register-content">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+          
+          <!-- Email (readonly) -->
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Email address</mat-label>
+            <mat-icon matTextPrefix aria-hidden="true">mail_outline</mat-icon>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              readonly
+            />
+          </mat-form-field>
+
+          <!-- Required Fields Section -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <mat-icon>badge</mat-icon>
+              Personal Information
+              <span class="required-badge">Required</span>
+            </h3>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>First Name</mat-label>
+                <mat-icon matTextPrefix aria-hidden="true">person_outline</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="name"
+                  autocomplete="given-name"
+                />
+                @if (nameControl?.hasError('required') && nameControl?.touched) {
+                  <mat-error>First name is required</mat-error>
+                }
+                @if (nameControl?.hasError('minlength') && nameControl?.touched) {
+                  <mat-error>Minimum 2 characters</mat-error>
+                }
+                @if (nameControl?.hasError('maxlength') && nameControl?.touched) {
+                  <mat-error>Maximum 50 characters</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Last Name</mat-label>
+                <mat-icon matTextPrefix aria-hidden="true">person_outline</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="lastname"
+                  autocomplete="family-name"
+                />
+                @if (lastnameControl?.hasError('required') && lastnameControl?.touched) {
+                  <mat-error>Last name is required</mat-error>
+                }
+                @if (lastnameControl?.hasError('minlength') && lastnameControl?.touched) {
+                  <mat-error>Minimum 2 characters</mat-error>
+                }
+                @if (lastnameControl?.hasError('maxlength') && lastnameControl?.touched) {
+                  <mat-error>Maximum 50 characters</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Optional Fields Section -->
+          <mat-expansion-panel class="optional-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>tune</mat-icon>
+                Optional Information
+              </mat-panel-title>
+              <mat-panel-description>
+                Additional details to personalize your experience
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="optional-fields">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Phone Number</mat-label>
+                <mat-icon matTextPrefix aria-hidden="true">phone</mat-icon>
+                <input
+                  matInput
+                  type="tel"
+                  formControlName="phone"
+                  autocomplete="tel"
+                />
+                @if (phoneControl?.hasError('pattern') && phoneControl?.touched) {
+                  <mat-error>Enter a valid phone number</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Date of Birth</mat-label>
+                <mat-icon matTextPrefix aria-hidden="true">cake</mat-icon>
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  formControlName="birthDate"
+                  [max]="maxDate"
+                  [min]="minDate"
+                />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-hint>You must be at least 13 years old</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Gender</mat-label>
+                <mat-icon matTextPrefix aria-hidden="true">wc</mat-icon>
+                <mat-select formControlName="gender">
+                  <mat-option value="">Select gender</mat-option>
+                  @for (option of genderOptions; track option.value) {
+                    <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Country / Region</mat-label>
+                <mat-icon matTextPrefix aria-hidden="true">public</mat-icon>
+                <mat-select formControlName="country">
+                  <mat-option value="">Select country</mat-option>
+                  @for (country of countries; track country.code) {
+                    <mat-option [value]="country.code">{{ country.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Notification Preferences -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <mat-icon>notifications</mat-icon>
+              Communication Preferences
+            </h3>
+            
+            <div class="notification-options">
+              <mat-slide-toggle formControlName="notificationEmail" color="primary">
+                <div class="toggle-content">
+                  <mat-icon>email</mat-icon>
+                  <span>Email notifications</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="notificationSms" color="primary">
+                <div class="toggle-content">
+                  <mat-icon>sms</mat-icon>
+                  <span>SMS notifications</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="notificationPush" color="primary">
+                <div class="toggle-content">
+                  <mat-icon>notifications_active</mat-icon>
+                  <span>Push notifications</span>
+                </div>
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <!-- Terms and Privacy -->
+          <div class="form-section legal-section">
+            <h3 class="section-title">
+              <mat-icon>gavel</mat-icon>
+              Legal Agreements
+              <span class="required-badge">Required</span>
+            </h3>
+
+            <div class="checkbox-group">
+              <mat-checkbox formControlName="termsAccepted" color="primary">
+                I accept the <a href="#" (click)="openTermsDialog($event)" class="legal-link">Terms and Conditions</a>
+              </mat-checkbox>
+              @if (termsControl?.hasError('required') && termsControl?.touched) {
+                <mat-error class="checkbox-error">You must accept the terms and conditions</mat-error>
+              }
+
+              <mat-checkbox formControlName="privacyPolicyAccepted" color="primary">
+                I accept the <a href="#" (click)="openPrivacyDialog($event)" class="legal-link">Privacy Policy</a>
+              </mat-checkbox>
+              @if (privacyControl?.hasError('required') && privacyControl?.touched) {
+                <mat-error class="checkbox-error">You must accept the privacy policy</mat-error>
+              }
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            mat-flat-button
+            type="submit"
+            class="register-button"
+            [disabled]="loading()"
+            aria-label="Create account button"
+          >
+            @if (loading()) {
+              <mat-spinner diameter="22" strokeWidth="3"></mat-spinner>
+            } @else {
+              <ng-container>
+                <span>Create Account</span>
+                <mat-icon class="button-icon">check_circle</mat-icon>
+              </ng-container>
+            }
+          </button>
+        </form>
+      </mat-card-content>
+
+      <!-- Footer -->
+      <div class="register-footer">
+        <mat-icon aria-hidden="true">security</mat-icon>
+        <span>Your data is protected with industry-standard encryption</span>
+      </div>
+    </mat-card>
+  </div>
+</div>

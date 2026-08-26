@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/*
+ * Angular Material CSS Variables integration with Tailwind
+ * This allows using Material theme colors in Tailwind classes
+ */
+@theme {
+  /* Primary colors */
+  --color-mat-primary: var(--mat-sys-primary);
+  --color-mat-on-primary: var(--mat-sys-on-primary);
+  --color-mat-primary-container: var(--mat-sys-primary-container);
+  --color-mat-on-primary-container: var(--mat-sys-on-primary-container);
+
+  /* Secondary colors */
+  --color-mat-secondary: var(--mat-sys-secondary);
+  --color-mat-on-secondary: var(--mat-sys-on-secondary);
+  --color-mat-secondary-container: var(--mat-sys-secondary-container);
+  --color-mat-on-secondary-container: var(--mat-sys-on-secondary-container);
+
+  /* Tertiary colors */
+  --color-mat-tertiary: var(--mat-sys-tertiary);
+  --color-mat-on-tertiary: var(--mat-sys-on-tertiary);
+
+  /* Surfaces and backgrounds */
+  --color-mat-surface: var(--mat-sys-surface);
+  --color-mat-on-surface: var(--mat-sys-on-surface);
+  --color-mat-surface-container: var(--mat-sys-surface-container);
+  --color-mat-surface-container-low: var(--mat-sys-surface-container-low);
+  --color-mat-surface-container-high: var(--mat-sys-surface-container-high);
+
+  /* Error states */
+  --color-mat-error: var(--mat-sys-error);
+  --color-mat-on-error: var(--mat-sys-on-error);
+
+  /* Outline */
+  --color-mat-outline: var(--mat-sys-outline);
+  --color-mat-outline-variant: var(--mat-sys-outline-variant);
+}
